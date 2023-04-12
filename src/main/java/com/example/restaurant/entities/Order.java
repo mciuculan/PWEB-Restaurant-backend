@@ -21,6 +21,7 @@ public class Order {
     @OneToMany
     @Getter
     @Setter
+    @Transient
     private Set<Item> items;
     @Getter
     @Setter

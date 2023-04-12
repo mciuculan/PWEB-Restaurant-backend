@@ -18,6 +18,7 @@ public class Item {
             nullable = false,
             insertable=false,
             updatable=false)
+    @Transient
     private Order order;
     @Getter
     @Setter
@@ -27,6 +28,7 @@ public class Item {
             nullable = false,
             insertable=false,
             updatable=false)
+    @Transient
     private Menu menuItem;
     @Getter
     @Setter

@@ -10,14 +10,24 @@ import java.time.LocalDateTime;
 @Table(name="reservation")
 public class Reservation {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.SEQUENCE)
     @Setter
     @Getter
+    @Column(name = "reservation_id")
     private Integer id;
     @Setter
     @Getter
-    @OneToOne(mappedBy = "reservation")
+    @OneToOne(mappedBy = "res")
+    @Transient
     private RestaurantTable table;
+    @Setter
+    @Getter
+    @Column(name = "table_id")
+    private Integer tableId;
+    @Setter
+    @Getter
+    @Column(name = "user_id")
+    private Integer userId;
     @Setter
     @Getter
     private LocalDateTime dateTime;
@@ -25,23 +35,15 @@ public class Reservation {
     @Getter
     private Integer numberOfGuests;
     @ManyToOne
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name="user_id",
+            nullable = false,
+            insertable=false,
+            updatable=false)
     @Setter
     @Getter
+    @Transient
     private User user;
 
     public Reservation() {
-    }
-
-    public Reservation(Integer id,
-                       RestaurantTable table,
-                       LocalDateTime dateTime,
-                       Integer numberOfGuests,
-                       User user) {
-        this.id = id;
-        this.table = table;
-        this.dateTime = dateTime;
-        this.numberOfGuests = numberOfGuests;
-        this.user = user;
     }
 }
