@@ -1,5 +1,6 @@
 package com.example.restaurant.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,21 +19,23 @@ public class Item {
             nullable = false,
             insertable=false,
             updatable=false)
-    @Transient
     private Order order;
     @Getter
     @Setter
     @ManyToOne
     @JoinColumn(name = "menu_item_id",
-            referencedColumnName = "menuItemId",
             nullable = false,
             insertable=false,
             updatable=false)
-    @Transient
     private Menu menuItem;
     @Getter
     @Setter
     private Integer quantity;
+//    @Getter
+//    @Setter
+//    @Column(name="menu_item_id")
+//    @JsonProperty("menu_item_id")
+//    private Integer menuItemId;
 
     public Item() {
     }

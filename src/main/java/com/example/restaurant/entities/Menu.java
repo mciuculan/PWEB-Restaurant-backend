@@ -1,9 +1,7 @@
 package com.example.restaurant.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,9 +12,12 @@ public class Menu {
     @GeneratedValue
     @Setter
     @Getter
+    @Column(name="menu_item_id")
     private Integer menuItemId;
     @Setter
     @Getter
+    @Column(name="item_name")
+    @JsonProperty("item_name")
     private String itemName;
     @Setter
     @Getter
