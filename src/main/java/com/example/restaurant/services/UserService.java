@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -21,8 +20,6 @@ public class UserService {
     private ReservationRepository reservationRepository;
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private RestaurantTableRepository restaurantTableRepository;
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
@@ -73,6 +70,20 @@ public class UserService {
         return userOrders;
     }
 
+    public List<Item> getOrdersItemsByUserId(@PathVariable Integer id) throws NoSuchElementException {
+        List<Item> items = itemRepository.findAll();
+        if (items.isEmpty()) {
+            throw new NoSuchElementException("There are no items in the database!");
+        }
+        List<Item> userItems = new ArrayList<>();
+        for (Item item : items) {
+            if (id.equals(item.getOrder().getUserId())) {
+                userItems.add(item);
+            }
+        }
+        return userItems;
+    }
+
     @Transactional
     public User addUser(User user) {
         userRepository.save(user);
@@ -84,18 +95,10 @@ public class UserService {
         Optional<User> user = userRepository.findById(id);
 
         if (user.isPresent()) {
-            // create table
-            RestaurantTable table = new RestaurantTable();
-            table.setTaken(true);
-            table.setNumberOfSeats(reservationDTO.getTable().getNumberOfSeats());
-            restaurantTableRepository.save(table);
-
             // create reservation
             Reservation reservation = new Reservation();
             reservation.setNumberOfGuests(reservationDTO.getNumberOfGuests());
             reservation.setDateTime(reservationDTO.getDateTime());
-            reservation.setTableId(table.getId());
-            reservation.setTable(table);
             reservation.setUserId(id);
             reservation.setUser(user.get());
             reservationRepository.save(reservation);
@@ -156,10 +159,11 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteItemsByOrderId(Integer orderId) throws NoSuchElementException {
+    public void deleteItemsByOrderId(Integer orderId) {
         List<Item> items = itemRepository.findAll();
         if (items.isEmpty()) {
-            throw new NoSuchElementException("There are no items in the database!");
+            System.out.println("There are no items in the database!");
+            return;
         }
         Iterator<Item> iterator = items.iterator();
         while (iterator.hasNext()) {
@@ -173,8 +177,45 @@ public class UserService {
     }
 
     @Transactional
+    public void deleteOrdersByUserId(Integer userId) {
+        List<Order> orders = orderRepository.findAll();
+        if (orders.isEmpty()) {
+            System.out.println("There are no orders in the database!");
+            return;
+        }
+        Iterator<Order> iterator = orders.iterator();
+        while (iterator.hasNext()) {
+            Order element = iterator.next();
+            if (userId.equals(element.getUserId())) {
+                deleteItemsByOrderId(element.getOrderId());
+                iterator.remove();
+                orderRepository.delete(element);
+            }
+        }
+    }
+
+    @Transactional
+    public void deleteReservationsByUserId(Integer userId) {
+        List<Reservation> reservations = reservationRepository.findAll();
+        if (reservations.isEmpty()) {
+            System.out.println("There are no reservations in the database!");
+            return;
+        }
+        Iterator<Reservation> iterator = reservations.iterator();
+        while (iterator.hasNext()) {
+            Reservation element = iterator.next();
+            if (userId.equals(element.getUserId())) {
+                iterator.remove();
+                reservationRepository.delete(element);
+            }
+        }
+    }
+
+    @Transactional
     public void deleteUserByID(Integer id) throws UserNotFoundException {
         if (userRepository.findById(id).isPresent()) {
+            deleteOrdersByUserId(id);
+            deleteReservationsByUserId(id);
             userRepository.deleteById(id);
         } else {
             throw new UserNotFoundException("Could not find user with id " + id);

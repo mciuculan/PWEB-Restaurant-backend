@@ -6,15 +6,15 @@ import com.example.restaurant.repositories.ReservationRepository;
 import com.example.restaurant.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1/")
 public class ReservationController {
-    @Autowired
-    private ReservationRepository reservationRepository;
     @Autowired
     private UserRepository userRepository;
 

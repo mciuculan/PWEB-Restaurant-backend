@@ -17,15 +17,6 @@ public class Reservation {
     private Integer id;
     @Setter
     @Getter
-    @OneToOne(mappedBy = "res")
-    @Transient
-    private RestaurantTable table;
-    @Setter
-    @Getter
-    @Column(name = "table_id")
-    private Integer tableId;
-    @Setter
-    @Getter
     @Column(name = "user_id")
     private Integer userId;
     @Setter
