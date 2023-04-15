@@ -57,6 +57,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
+
     public User() {
         this.role = Roles.CLIENT;
         this.reservations = new ArrayList<>();
