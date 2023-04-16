@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/user")
 public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping("/get/all")
     public ResponseEntity<?> listAll() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok().body(users);
     }
 
-    @GetMapping("/user/{id}/reservations/{reservationId}")
+    @GetMapping("/get/{id}/reservations/{reservationId}")
     public ResponseEntity<?> getUserReservationByID(
             @PathVariable Integer id,
             @PathVariable Integer reservationId) {
@@ -30,25 +30,25 @@ public class UserController {
         return ResponseEntity.ok().body(reservation);
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<?> getUserByID(@PathVariable Integer id) throws UserNotFoundException {
         User user = userService.getUserByID(id);
         return ResponseEntity.ok().body(user);
     }
 
-    @GetMapping("/user/{id}/reservations")
+    @GetMapping("/get/{id}/reservations")
     public ResponseEntity<?> getUserReservationsByUserID(@PathVariable Integer id) throws NoSuchElementException {
         List<Reservation> reservations = userService.getUserReservationsByUserID(id);
         return ResponseEntity.ok().body(reservations);
     }
 
-    @GetMapping("/user/{id}/orders")
+    @GetMapping("/get/{id}/orders")
     public ResponseEntity<?> getOrdersByUserId(@PathVariable Integer id) throws NoSuchElementException {
         List<Order> orders = userService.getOrdersByUserId(id);
         return ResponseEntity.ok().body(orders);
     }
 
-    @GetMapping("/user/{id}/orders/items")
+    @GetMapping("/get/{id}/orders/items")
     public ResponseEntity<?> getOrdersItemsByUserId(@PathVariable Integer id) throws NoSuchElementException {
         List<Item> items = userService.getOrdersItemsByUserId(id);
         return ResponseEntity.ok().body(items);
@@ -60,7 +60,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/user/{id}/add-reservation")
+    @PostMapping("/{id}/add-reservation")
     public ResponseEntity<?> addReservation(
             @PathVariable Integer id,
             @RequestBody Reservation reservationDTO) throws UserNotFoundException {
@@ -68,7 +68,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/user/{id}/add-order")
+    @PostMapping("/{id}/add-order")
     public ResponseEntity<?> createOrder(
             @PathVariable Integer id,
             @RequestBody Order orderDTO) throws UserNotFoundException {
@@ -76,14 +76,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("order/{orderId}")
+    @DeleteMapping("/order/{orderId}")
     public ResponseEntity<?> deleteOrderByID(
             @PathVariable Integer orderId) {
         userService.deleteItemsByOrderId(orderId);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteUserByID(@PathVariable Integer id) throws UserNotFoundException {
         userService.deleteUserByID(id);
         return ResponseEntity.ok().build();

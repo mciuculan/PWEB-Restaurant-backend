@@ -1,7 +1,7 @@
 package com.example.restaurant.services;
 
 import com.example.restaurant.entities.Token;
-import com.example.restaurant.entities.TokenType;
+import com.example.restaurant.constants.TokenType;
 import com.example.restaurant.repositories.TokenRepository;
 import com.example.restaurant.requests.AuthenticationRequest;
 import com.example.restaurant.entities.User;
@@ -30,7 +30,6 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
-
     private final TokenRepository tokenRepository;
 
     public AuthenticationResponse register(RegisterRequest request) {
@@ -40,7 +39,6 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPhoneNumber(request.getPhoneNumber());
         user.setPassword(encoder.encode(request.getPassword()));
-
 
         var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -102,7 +100,7 @@ public class AuthService {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
         refreshToken = authHeader.substring(7);

@@ -1,5 +1,6 @@
 package com.example.restaurant.entities;
 
+import com.example.restaurant.constants.TokenType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
