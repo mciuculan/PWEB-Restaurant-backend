@@ -1,5 +1,6 @@
 package com.example.restaurant.controllers;
 
+import com.example.restaurant.dto.UserDTO;
 import com.example.restaurant.exceptions.NoSuchElementException;
 import com.example.restaurant.exceptions.UserNotFoundException;
 import com.example.restaurant.entities.*;
@@ -18,7 +19,7 @@ public class UserController {
 
     @GetMapping("/get/all")
     public ResponseEntity<?> listAll() {
-        List<User> users = userService.getAllUsers();
+        List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok().body(users);
     }
 
@@ -32,7 +33,7 @@ public class UserController {
 
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getUserByID(@PathVariable Integer id) throws UserNotFoundException {
-        User user = userService.getUserByID(id);
+        UserDTO user = userService.getUserByID(id);
         return ResponseEntity.ok().body(user);
     }
 
@@ -52,12 +53,6 @@ public class UserController {
     public ResponseEntity<?> getOrdersItemsByUserId(@PathVariable Integer id) throws NoSuchElementException {
         List<Item> items = userService.getOrdersItemsByUserId(id);
         return ResponseEntity.ok().body(items);
-    }
-
-    @PostMapping("/addUser")
-    public ResponseEntity<?> addUser(@RequestBody User user) {
-        userService.addUser(user);
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/add-reservation")

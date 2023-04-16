@@ -1,7 +1,8 @@
 package com.example.restaurant.controllers;
 
+import com.example.restaurant.dto.MenuDTO;
 import com.example.restaurant.entities.Menu;
-import com.example.restaurant.repositories.MenuRepository;
+import com.example.restaurant.services.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,22 +13,23 @@ import java.util.List;
 @RequestMapping("/api/v1/menu")
 public class MenuController {
     @Autowired
-    private MenuRepository menuRepository;
+    private MenuService menuService;
 
     @GetMapping()
-    public List<Menu> listAll() {
-        List<Menu> items = menuRepository.findAll();
-        return items;
+    public  ResponseEntity<List<MenuDTO>> listAll() {
+        List<MenuDTO> items = menuService.getMenu();
+        return ResponseEntity.ok(items);
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addToMenu(@RequestBody Menu menuItem) {
-        menuRepository.save(menuItem);
-        return ResponseEntity.ok().build();
+        MenuDTO menuDTO = menuService.addToMenu(menuItem);
+        return ResponseEntity.ok(menuDTO);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteItemFromMenu(@PathVariable Integer id) {
-        menuRepository.deleteById(id);
+    public ResponseEntity<?> deleteItemFromMenu(@PathVariable Integer id) {
+        menuService.deleteItemFromMenu(id);
+        return ResponseEntity.ok().build();
     }
 }

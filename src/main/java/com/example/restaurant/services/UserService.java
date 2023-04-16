@@ -1,12 +1,13 @@
 package com.example.restaurant.services;
 
+import com.example.restaurant.dto.MenuDTO;
+import com.example.restaurant.dto.UserDTO;
 import com.example.restaurant.entities.*;
 import com.example.restaurant.exceptions.NoSuchElementException;
 import com.example.restaurant.exceptions.UserNotFoundException;
 import com.example.restaurant.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -25,8 +26,13 @@ public class UserService {
     @Autowired
     private MenuRepository menuRepository;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        List<UserDTO> usersDTO = new ArrayList<>();
+
+        users.forEach(user -> usersDTO.add(UserDTO.fromUser(user)));
+
+        return usersDTO;
     }
 
     public Reservation getUserReservationByID(Integer id, Integer reservationId) {
@@ -34,10 +40,10 @@ public class UserService {
         return user.getReservations().get(reservationId);
     }
 
-    public User getUserByID(Integer id) throws UserNotFoundException {
+    public UserDTO getUserByID(Integer id) throws UserNotFoundException {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
-            return user.get();
+            return UserDTO.fromUser(user.get());
         }
         throw new UserNotFoundException("User with id " + id + " could not be found");
     }
@@ -70,7 +76,7 @@ public class UserService {
         return userOrders;
     }
 
-    public List<Item> getOrdersItemsByUserId(@PathVariable Integer id) throws NoSuchElementException {
+    public List<Item> getOrdersItemsByUserId(Integer id) throws NoSuchElementException {
         List<Item> items = itemRepository.findAll();
         if (items.isEmpty()) {
             throw new NoSuchElementException("There are no items in the database!");
@@ -82,12 +88,6 @@ public class UserService {
             }
         }
         return userItems;
-    }
-
-    @Transactional
-    public User addUser(User user) {
-        userRepository.save(user);
-        return user;
     }
 
     @Transactional
@@ -138,20 +138,18 @@ public class UserService {
             itemRepository.saveAll(items);
 
             order.setItems(items);
-            Double total = 0.0;
+            double total = 0.0;
             for (Item item : items) {
                 total += item.getQuantity() * item.getMenuItem().getPrice();
             }
             order.setTotal(total);
             orderRepository.save(order);
 
-            if (user.isPresent()) {
-                // update user
-                List<Order> userOrderList = user.get().getOrders();
-                userOrderList.add(order);
-                user.get().setOrders(userOrderList);
-                userRepository.save(user.get());
-            }
+            // update user
+            List<Order> userOrderList = user.get().getOrders();
+            userOrderList.add(order);
+            user.get().setOrders(userOrderList);
+            userRepository.save(user.get());
             return order;
         } else {
             throw new UserNotFoundException("Could not find user with id " + id);
