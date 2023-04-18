@@ -2,7 +2,6 @@ package com.example.restaurant.controllers;
 
 import com.example.restaurant.entities.Reservation;
 import com.example.restaurant.entities.User;
-import com.example.restaurant.repositories.ReservationRepository;
 import com.example.restaurant.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

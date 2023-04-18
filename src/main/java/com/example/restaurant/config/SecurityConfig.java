@@ -27,9 +27,10 @@ public class SecurityConfig {
 
     private final List<String> adminPaths = List.of(
             "/api/v1/user/get/**",
-            "/api/v1/user/addUser"
+            "/api/v1/menu/delete/**",
+            "/api/v1/menu/add",
+            "/api/v1/reservations"
     );
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,6 +39,7 @@ public class SecurityConfig {
                 .disable()
                 .authorizeHttpRequests((authz) -> {
                     authz.requestMatchers("/api/v1/auth/**").permitAll();
+                    authz.requestMatchers("/api/v1/menu").permitAll();
                     for (String path : adminPaths) {
                         authz.requestMatchers(path).hasAuthority(Roles.ADMIN.getRoleName());
                     }
@@ -57,7 +59,6 @@ public class SecurityConfig {
                         throw new RuntimeException(e);
                     }
                 });
-
         return http.build();
     }
 }
